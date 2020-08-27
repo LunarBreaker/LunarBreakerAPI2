@@ -42,7 +42,7 @@ public class NotificationHandler {
      * @param fallback       The fallback runnable if the user is not on LC or CB
      */
     public void sendNotificationOrFallback(Player player, Notification notification, Runnable fallback) {
-        if (plugin.isRunningCheatBreaker(player.getUniqueId()) || plugin.isRunningLunarClient(player.getUniqueId()) ) {
+        if (plugin.isRunningCheatBreaker(player.getUniqueId()) || (plugin.isRunningLunarClient(player.getUniqueId()) && !plugin.isOn18(player)) ) {
             sendNotification(player, notification);
         } else {
             fallback.run();
