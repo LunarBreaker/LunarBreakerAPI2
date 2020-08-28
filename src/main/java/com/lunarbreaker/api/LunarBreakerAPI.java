@@ -8,6 +8,7 @@ import com.lunarbreaker.api.commands.LBCommand;
 import com.lunarbreaker.api.commands.LCCommand;
 import com.lunarbreaker.api.events.PacketReceivedEvent;
 import com.lunarbreaker.api.events.PacketSentEvent;
+import com.lunarbreaker.api.handlers.border.BorderHandler;
 import com.lunarbreaker.api.handlers.bossbar.BossbarHandler;
 import com.lunarbreaker.api.handlers.cooldown.CooldownHandler;
 import com.lunarbreaker.api.handlers.emote.EmoteHandler;
@@ -43,6 +44,7 @@ public class LunarBreakerAPI extends JavaPlugin {
     @Getter private static final String CB_MESSAGE_CHANNEL = "CB-Client";
     @Getter private static final String LC_MESSAGE_CHANNEL = "Lunar-Client";
 
+    @Getter private BorderHandler borderHandler;
     @Getter private BossbarHandler bossbarHandler;
     @Getter private CooldownHandler cooldownHandler;
     @Getter private EmoteHandler emoteHandler;
@@ -98,6 +100,7 @@ public class LunarBreakerAPI extends JavaPlugin {
         getCommand("lunarbreaker").setExecutor(new LBCommand());
         getCommand("cb").setExecutor(new CBCommand());
 
+        borderHandler = new BorderHandler(this);
         bossbarHandler = new BossbarHandler(this);
         cooldownHandler = new CooldownHandler(this);
         emoteHandler = new EmoteHandler(this);

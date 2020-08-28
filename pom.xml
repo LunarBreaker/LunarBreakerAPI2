@@ -67,13 +67,6 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>net.hylist</groupId>

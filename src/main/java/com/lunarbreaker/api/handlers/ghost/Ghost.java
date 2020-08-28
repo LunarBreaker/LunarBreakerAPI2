@@ -19,4 +19,5 @@ public final class Ghost {
         this.ghostedPlayers = ghostedPlayers;
         this.unGhostedPlayers = unGhostedPlayers;
     }
+
 }
