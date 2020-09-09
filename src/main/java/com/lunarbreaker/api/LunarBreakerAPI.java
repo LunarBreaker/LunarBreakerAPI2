@@ -1,6 +1,7 @@
 package com.lunarbreaker.api;
 
 import com.cheatbreaker.nethandler.CBPacket;
+import com.google.common.base.Charsets;
 import com.lunarbreaker.api.client.Client;
 import com.lunarbreaker.api.commands.CBCommand;
 import com.lunarbreaker.api.commands.ClientCommand;
@@ -64,6 +65,7 @@ public class LunarBreakerAPI extends JavaPlugin {
     @Getter private final LCNetHandler lcNetHandlerServer = new LCNetHandler();
 
     @Getter private final Map<UUID, Client> players = new HashMap<>();
+    @Getter private final Map<UUID, List<String>> brands = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -75,13 +77,20 @@ public class LunarBreakerAPI extends JavaPlugin {
 
         messenger.registerIncomingPluginChannel(this, CB_MESSAGE_CHANNEL, (channel, player, bytes) -> {
             CBPacket packet = CBPacket.handle(cbNetHandlerServer, bytes, player);
-                    if(packet != null) {
-                        PacketReceivedEvent event = new PacketReceivedEvent(player, packet);
-                        Bukkit.getPluginManager().callEvent(event);
-                        if (!event.isCancelled()) {
-                            packet.process(this.cbNetHandlerServer);
-                        }
-                    }
+            if(packet != null) {
+                PacketReceivedEvent event = new PacketReceivedEvent(player, packet);
+                Bukkit.getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    packet.process(this.cbNetHandlerServer);
+                }
+            }
+        });
+
+        messenger.registerIncomingPluginChannel(this, "MC|Brand", (channel, player, bytes) -> {
+            if(!brands.containsKey(player.getUniqueId())) {
+                brands.put(player.getUniqueId(), new ArrayList<>());
+            }
+            brands.get(player.getUniqueId()).add(new String(bytes, Charsets.UTF_8));
         });
 
         messenger.registerIncomingPluginChannel(this, LC_MESSAGE_CHANNEL, (channel, player, bytes) -> {
@@ -191,6 +200,10 @@ public class LunarBreakerAPI extends JavaPlugin {
             return true;
         }
         return false;
+    }
+
+    public int fromRGB(int r, int g, int b) {
+        return ((r&0x0ff)<<16)|((g&0x0ff)<<8)|(b&0x0ff);
     }
 
 }

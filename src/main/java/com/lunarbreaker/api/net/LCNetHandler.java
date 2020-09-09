@@ -55,6 +55,6 @@ public class LCNetHandler implements LCNetHandlerServer {
     public void handleRemoveWaypoint(LCPacketWaypointRemove packet) {}
 
     @Override
-    public void handleEmote(LCPacketEmoteBroadcast packet) { }
+    public void handleEmote(LCPacketEmoteBroadcast packet) {}
 
 }

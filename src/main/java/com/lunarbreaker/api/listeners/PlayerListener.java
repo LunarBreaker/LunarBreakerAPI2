@@ -48,6 +48,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onUnregister(PlayerQuitEvent event) {
         plugin.getPlayers().remove(event.getPlayer().getUniqueId());
+        plugin.getBrands().remove(event.getPlayer().getUniqueId());
     }
 
 }

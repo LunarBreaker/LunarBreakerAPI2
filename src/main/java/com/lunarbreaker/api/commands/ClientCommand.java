@@ -8,6 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 /*
  * Used to show players what client they or other players are on
 */
@@ -40,17 +42,19 @@ public class ClientCommand implements CommandExecutor {
         }else {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Client" + ChatColor.GRAY + ": " + ChatColor.WHITE + "Vanilla");
         }
+
+        List<String> brands =  LunarBreakerAPI.getInstance().getBrands().get(target.getUniqueId());
+        if(brands.size() > 1) {
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brands" + ChatColor.GRAY + ":");
+            brands.forEach(brand -> sender.sendMessage(ChatColor.GRAY + "    - " + ChatColor.WHITE + brand));
+        }else if(!brands.isEmpty()) {
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brand" + ChatColor.GRAY + ": " + ChatColor.WHITE + brands.get(0));
+        }
+
         if(LunarBreakerAPI.getInstance().isOn18(target)) {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + "1.8");
         }else {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + "1.7");
-        }
-        if(LunarBreakerAPI.getInstance().isRunningLunarClient(target.getUniqueId())) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Protected" + ChatColor.GRAY + ": " + ChatColor.YELLOW + "Maybe");
-        }else if(LunarBreakerAPI.getInstance().isRunningCheatBreaker(target.getUniqueId())) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Protected" + ChatColor.GRAY + ": " + ChatColor.RED + "No");
-        }else {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Protected" + ChatColor.GRAY + ": " + ChatColor.RED + "No");
         }
         sender.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-----------------------------------------------------");
 
