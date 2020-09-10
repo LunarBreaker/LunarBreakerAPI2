@@ -30,6 +30,7 @@ import com.lunarbreaker.api.net.LCNetHandler;
 import com.lunarclient.bukkitapi.nethandler.LCPacket;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -61,8 +62,8 @@ public class LunarBreakerAPI extends JavaPlugin {
     @Getter private WaypointHandler waypointHandler;
     @Getter private WorldHandler worldHandler;
 
-    @Getter private final CBNetHandler cbNetHandlerServer = new CBNetHandler();
-    @Getter private final LCNetHandler lcNetHandlerServer = new LCNetHandler();
+    @Setter @Getter private CBNetHandler cbNetHandlerServer = new CBNetHandler();
+    @Setter @Getter private LCNetHandler lcNetHandlerServer = new LCNetHandler();
 
     @Getter private final Map<UUID, Client> players = new HashMap<>();
     @Getter private final Map<UUID, List<String>> brands = new HashMap<>();

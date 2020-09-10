@@ -32,9 +32,9 @@ public class CBCommand implements CommandExecutor {
         }
 
         if(!LunarBreakerAPI.getInstance().isRunningCheatBreaker(target.getUniqueId())) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + target.getName() + " &cis NOT on CheatBreaker."));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + target.getDisplayName() + " &cis NOT on CheatBreaker."));
         }else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a" + target.getName() + " &ais currently on CheatBreaker."));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a" + target.getDisplayName() + " &ais currently on CheatBreaker."));
         }
 
         return true;

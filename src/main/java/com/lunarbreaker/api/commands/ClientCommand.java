@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 
 /*
@@ -33,8 +34,8 @@ public class ClientCommand implements CommandExecutor {
             }
         }
 
-        sender.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-----------------------------------------------------");
-        sender.sendMessage(ChatColor.YELLOW + target.getPlayerListName() + ":");
+        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + String.join("", Collections.nCopies(53, "-")));
+        sender.sendMessage(ChatColor.YELLOW + target.getDisplayName() + ChatColor.GRAY + ":");
         if(LunarBreakerAPI.getInstance().isRunningLunarClient(target.getUniqueId())) {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Client" + ChatColor.GRAY + ": " + ChatColor.DARK_AQUA + "Lunar Client");
         }else if(LunarBreakerAPI.getInstance().isRunningCheatBreaker(target.getUniqueId())) {
@@ -44,11 +45,9 @@ public class ClientCommand implements CommandExecutor {
         }
 
         List<String> brands =  LunarBreakerAPI.getInstance().getBrands().get(target.getUniqueId());
-        if(brands.size() > 1) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brands" + ChatColor.GRAY + ":");
-            brands.forEach(brand -> sender.sendMessage(ChatColor.GRAY + "    - " + ChatColor.WHITE + brand));
-        }else if(!brands.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brand" + ChatColor.GRAY + ": " + ChatColor.WHITE + brands.get(0));
+        if(brands != null && !brands.isEmpty()) {
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brands" + ChatColor.GRAY + ": " +  ChatColor.WHITE +
+                    String.join(ChatColor.GRAY + ", " +  ChatColor.WHITE, brands));
         }
 
         if(LunarBreakerAPI.getInstance().isOn18(target)) {
@@ -56,7 +55,7 @@ public class ClientCommand implements CommandExecutor {
         }else {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + "1.7");
         }
-        sender.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "-----------------------------------------------------");
+        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + String.join("", Collections.nCopies(53, "-")));
 
         return true;
     }
