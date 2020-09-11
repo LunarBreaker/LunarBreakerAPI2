@@ -91,7 +91,11 @@ public class LunarBreakerAPI extends JavaPlugin {
             if(!brands.containsKey(player.getUniqueId())) {
                 brands.put(player.getUniqueId(), new ArrayList<>());
             }
-            brands.get(player.getUniqueId()).add(new String(bytes, Charsets.UTF_8));
+            List<String> brands = this.brands.get(player.getUniqueId());
+            String brand = new String(bytes, Charsets.UTF_8);
+            if(!brands.contains(brand)) {
+                brands.add(new String(bytes, Charsets.UTF_8));
+            }
         });
 
         messenger.registerIncomingPluginChannel(this, LC_MESSAGE_CHANNEL, (channel, player, bytes) -> {
