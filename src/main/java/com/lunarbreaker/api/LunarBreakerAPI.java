@@ -94,7 +94,7 @@ public class LunarBreakerAPI extends JavaPlugin {
             List<String> brands = this.brands.get(player.getUniqueId());
             String brand = new String(bytes, Charsets.UTF_8);
             if(!brands.contains(brand)) {
-                brands.add(new String(bytes, Charsets.UTF_8));
+                brands.add(brand);
             }
         });
 
