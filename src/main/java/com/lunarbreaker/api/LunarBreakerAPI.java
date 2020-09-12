@@ -65,7 +65,7 @@ public class LunarBreakerAPI extends JavaPlugin {
     @Setter @Getter private CBNetHandler cbNetHandlerServer = new CBNetHandler();
     @Setter @Getter private LCNetHandler lcNetHandlerServer = new LCNetHandler();
 
-    @Getter private final Map<UUID, Client> players = new HashMap<>();
+    @Getter private final Map<UUID, Map.Entry<Client, Boolean>> players = new HashMap<>();
     @Getter private final Map<UUID, List<String>> brands = new HashMap<>();
 
     @Override
@@ -138,7 +138,7 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @return       True if they are running CB
      */
     public boolean isRunningCheatBreaker(UUID uuid) {
-        return players.containsKey(uuid) && players.get(uuid).equals(Client.CB);
+        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.CB, true));
     }
 
     /**
@@ -146,7 +146,7 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @return       True if they are running LC
      */
     public boolean isRunningLunarClient(UUID uuid) {
-        return players.containsKey(uuid) && players.get(uuid).equals(Client.LC);
+        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.LC, true));
     }
 
     /**
