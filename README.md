@@ -5,7 +5,7 @@
 
 ## LunarBreakerAPI2 electric boogaloo 
 
-LunarBreakerAPI 2 is a complete recode of the original which was based off [CheatBreakerAPI](https://github.com/CheatBreaker/CheatBreakerAPI), this version is here to be more optimised and has made integrating into your plugins much simpler but with a few bonuses features.
+LunarBreakerAPI 2 is a complete recode of the original which was based off [CheatBreakerAPI](https://github.com/CheatBreaker/CheatBreakerAPI), this version is here to be more optimised and has made integrating into your plugins much simpler but with a few bonus features.
 
 ## Reporting an issue
 
