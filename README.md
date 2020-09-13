@@ -3,9 +3,9 @@
     <img src="https://i.gyazo.com/2ae7a1967ff14ed8d830df0670965969.png" width="150" height="150"/>
 </p>
 
-## LunarBreakerAPI2
+## LunarBreakerAPI2 electric boogaloo 
 
-The LunarBreaker API will allow you to detect when a player is running CheatBreaker and Lunar Client, enable and disable HUD modules, allow x-ray for your staff, and much more.
+LunarBreakerAPI 2 is a complete recode of the original which was based off [CheatBreakerAPI](https://github.com/CheatBreaker/CheatBreakerAPI), this version is here to be more optimised and has made integrating into your plugins much simpler but with a few bonuses features.
 
 ## Reporting an issue
 
