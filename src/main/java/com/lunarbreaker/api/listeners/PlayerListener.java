@@ -1,9 +1,11 @@
 package com.lunarbreaker.api.listeners;
 
+import com.google.common.base.Charsets;
 import com.lunarbreaker.api.LunarBreakerAPI;
 import com.lunarbreaker.api.client.Client;
 import com.lunarbreaker.api.events.PlayerRegisterEvent;
 import com.lunarbreaker.api.events.PlayerUnregisterEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -11,6 +13,8 @@ import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /*
@@ -26,18 +30,29 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onRegister(PlayerRegisterChannelEvent event) {
-        if(event.getChannel().equals(LunarBreakerAPI.getCB_MESSAGE_CHANNEL())) {
-            boolean verified = LunarBreakerAPI.getInstance().getBrands().get(event.getPlayer().getUniqueId()).contains("vanilla");
-            plugin.getPlayers().put(event.getPlayer().getUniqueId(), new AbstractMap.SimpleEntry<>(Client.CB, verified));
+        Player player = event.getPlayer();
 
-            if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(event.getPlayer(), Client.CB));
-            plugin.getWorldHandler().updateWorld(event.getPlayer());
-        }else if(event.getChannel().equals(LunarBreakerAPI.getLC_MESSAGE_CHANNEL())) {
-            boolean verified = isOnLunar(event.getPlayer().getUniqueId());
-            plugin.getPlayers().put(event.getPlayer().getUniqueId(), new AbstractMap.SimpleEntry<>(Client.LC, verified));
+        if(!plugin.getChannels().containsKey(player.getUniqueId())) {
+            plugin.getChannels().put(player.getUniqueId(), new ArrayList<>());
+        }
+        List<String> channels = plugin.getChannels().get(player.getUniqueId());
+        String channel = event.getChannel();
+        if(!channels.contains(channel)) {
+            channels.add(channel);
+        }
 
-            if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(event.getPlayer(), Client.LC));
+        if(channel.equals(LunarBreakerAPI.getCB_MESSAGE_CHANNEL())) {
+            boolean verified = LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId()).contains("vanilla") && !LunarBreakerAPI.getInstance().isOn18(player);
+            plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.CB, verified));
+
+            if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.CB));
             plugin.getWorldHandler().updateWorld(event.getPlayer());
+        }else if(channel.equals(LunarBreakerAPI.getLC_MESSAGE_CHANNEL())) {
+            boolean verified = isOnLunar(player.getUniqueId());
+            plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.LC, verified));
+
+            if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
+            plugin.getWorldHandler().updateWorld(player);
         }
     }
 
@@ -63,6 +78,7 @@ public class PlayerListener implements Listener {
     public void onUnregister(PlayerQuitEvent event) {
         plugin.getPlayers().remove(event.getPlayer().getUniqueId());
         plugin.getBrands().remove(event.getPlayer().getUniqueId());
+        plugin.getChannels().remove(event.getPlayer().getUniqueId());
     }
 
 }

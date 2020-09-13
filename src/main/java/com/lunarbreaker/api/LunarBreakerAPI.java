@@ -67,6 +67,7 @@ public class LunarBreakerAPI extends JavaPlugin {
 
     @Getter private final Map<UUID, Map.Entry<Client, Boolean>> players = new HashMap<>();
     @Getter private final Map<UUID, List<String>> brands = new HashMap<>();
+    @Getter private final Map<UUID, List<String>> channels = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -176,6 +177,19 @@ public class LunarBreakerAPI extends JavaPlugin {
     }
 
     /**
+     * @param uuid   The UUID of the player you are checking
+     * @return       The version of lunar client they are on
+     */
+    public String getLunarVersion(UUID uuid) {
+        for(String brand : LunarBreakerAPI.getInstance().getBrands().get(uuid)) {
+            if(brand.contains(":") && brand.split(":")[0].equals("lunarclient")) {
+                return brand.split(":")[1];
+            }
+        }
+        return "N/A";
+    }
+
+    /**
      * Attempts to send the CB message and returns if successful
      *
      * @param player   The player the message is sent to
@@ -207,6 +221,12 @@ public class LunarBreakerAPI extends JavaPlugin {
         return false;
     }
 
+    /**
+     * @param r   Red value
+     * @param g   Green value
+     * @param b   Blue Value
+     * @return    Decimal color value
+     */
     public int fromRGB(int r, int g, int b) {
         return ((r&0x0ff)<<16)|((g&0x0ff)<<8)|(b&0x0ff);
     }

@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /*
  * Used to show players what client they or other players are on
@@ -44,6 +45,12 @@ public class ClientCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Client" + ChatColor.GRAY + ": " + ChatColor.WHITE + "Vanilla");
         }
 
+        List<String> channels =  LunarBreakerAPI.getInstance().getChannels().get(target.getUniqueId());
+        if(channels != null && !channels.isEmpty()) {
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Channel" + (channels.size() == 1 ? "" : "s") + ChatColor.GRAY + ": " +
+                    ChatColor.WHITE + String.join(ChatColor.GRAY + ", " + ChatColor.WHITE, channels));
+        }
+
         List<String> brands =  LunarBreakerAPI.getInstance().getBrands().get(target.getUniqueId());
         if(brands != null && !brands.isEmpty()) {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brand" + (brands.size() == 1 ? "" : "s") + ChatColor.GRAY + ": " +
@@ -51,9 +58,9 @@ public class ClientCommand implements CommandExecutor {
         }
 
         if(LunarBreakerAPI.getInstance().isOn18(target)) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + "1.8");
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target.getUniqueId())+ ChatColor.GRAY + " (1.8)");
         }else {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + "1.7");
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target.getUniqueId())+ ChatColor.GRAY + " (1.7)");
         }
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + String.join("", Collections.nCopies(53, "-")));
 
