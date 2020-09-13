@@ -46,8 +46,8 @@ public class ClientCommand implements CommandExecutor {
 
         List<String> brands =  LunarBreakerAPI.getInstance().getBrands().get(target.getUniqueId());
         if(brands != null && !brands.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brands" + ChatColor.GRAY + ": " +  ChatColor.WHITE +
-                    String.join(ChatColor.GRAY + ", " +  ChatColor.WHITE, brands));
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Brand" + (brands.size() == 1 ? "" : "s") + ChatColor.GRAY + ": " +
+                    ChatColor.WHITE + String.join(ChatColor.GRAY + ", " + ChatColor.WHITE, brands));
         }
 
         if(LunarBreakerAPI.getInstance().isOn18(target)) {
