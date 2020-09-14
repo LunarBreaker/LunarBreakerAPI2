@@ -5,6 +5,8 @@ package com.lunarbreaker.api.client;
 */
 public enum Client {
 
+    FORGE,
+    BLC,
     LC,
     CB
 

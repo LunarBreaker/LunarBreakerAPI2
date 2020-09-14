@@ -1,5 +1,5 @@
 name: LunarBreakerAPI
-version: 25b34e0
+version: ${git.commit.id.abbrev}
 description: CheatBreaker and Lunar Client API plugin
 authors: ["CheatBreaker Development Team", "Moonsworth LLC", "ProPractice"]
 main: com.lunarbreaker.api.LunarBreakerAPI
@@ -9,5 +9,6 @@ commands:
     aliases: ["lunarclient"]
   client:
   lunarbreaker:
+    aliases: ["lbapi"]
   cb:
     aliases: ["cheatbreaker"]

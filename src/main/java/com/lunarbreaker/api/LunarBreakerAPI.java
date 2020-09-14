@@ -136,6 +136,22 @@ public class LunarBreakerAPI extends JavaPlugin {
 
     /**
      * @param uuid   The UUID of the player you are checking
+     * @return       True if they are running Forge
+     */
+    public boolean isRunningForge(UUID uuid) {
+        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.FORGE, true));
+    }
+
+    /**
+     * @param uuid   The UUID of the player you are checking
+     * @return       True if they are running BLC
+     */
+    public boolean isRunningBadlionClient(UUID uuid) {
+        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.BLC, true));
+    }
+
+    /**
+     * @param uuid   The UUID of the player you are checking
      * @return       True if they are running CB
      */
     public boolean isRunningCheatBreaker(UUID uuid) {
@@ -148,6 +164,24 @@ public class LunarBreakerAPI extends JavaPlugin {
      */
     public boolean isRunningLunarClient(UUID uuid) {
         return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.LC, true));
+    }
+
+    /**
+     * @param p   The player you are checking
+     * @return    True if they are running Forge
+     */
+    @Deprecated
+    public boolean isRunningForge(Player p) {
+        return isRunningForge(p.getUniqueId());
+    }
+
+    /**
+     * @param p   The player you are checking
+     * @return    True if they are running BLC
+     */
+    @Deprecated
+    public boolean isRunningBadlionClient(Player p) {
+        return isRunningBadlionClient(p.getUniqueId());
     }
 
     /**
@@ -169,21 +203,24 @@ public class LunarBreakerAPI extends JavaPlugin {
     }
 
     /**
-     * @param p   The player you are checking
-     * @return    True if they are running 1.8 or higher
+     * @param player   The player you are checking
+     * @return         True if they are running 1.8 or higher
      */
-    public boolean isOn18(Player p) {
-        return ((CraftPlayer) p).getHandle().playerConnection.networkManager.getVersion() >= 47;
+    public boolean isOn18(Player player) {
+        return ((CraftPlayer) player).getHandle().playerConnection.networkManager.getVersion() >= 47;
     }
 
     /**
-     * @param uuid   The UUID of the player you are checking
-     * @return       The version of lunar client they are on
+     * @param player   The player you are checking
+     * @return         The version of lunar client they are on
      */
-    public String getLunarVersion(UUID uuid) {
-        for(String brand : LunarBreakerAPI.getInstance().getBrands().get(uuid)) {
-            if(brand.contains(":") && brand.split(":")[0].equals("lunarclient")) {
-                return brand.split(":")[1];
+    public String getLunarVersion(Player player) {
+        for(String brand : LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId())) {
+            if(brand.contains(":")) {
+                String[] splitBrand = brand.split(":");
+                if(brand.split(":")[0].equals((isOn18(player) ? "\u0013" : "") + "lunarclient") && splitBrand[1].length() == 7) {
+                    return splitBrand[1];
+                }
             }
         }
         return "N/A";

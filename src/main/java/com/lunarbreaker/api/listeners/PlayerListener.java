@@ -1,6 +1,5 @@
 package com.lunarbreaker.api.listeners;
 
-import com.google.common.base.Charsets;
 import com.lunarbreaker.api.LunarBreakerAPI;
 import com.lunarbreaker.api.client.Client;
 import com.lunarbreaker.api.events.PlayerRegisterEvent;
@@ -15,7 +14,6 @@ import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /*
  * Used to handle all registrations of CB/LC
@@ -48,21 +46,12 @@ public class PlayerListener implements Listener {
             if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.CB));
             plugin.getWorldHandler().updateWorld(event.getPlayer());
         }else if(channel.equals(LunarBreakerAPI.getLC_MESSAGE_CHANNEL())) {
-            boolean verified = isOnLunar(player.getUniqueId());
+            boolean verified = !plugin.getLunarVersion(player).equals("N/A");
             plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.LC, verified));
 
             if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
             plugin.getWorldHandler().updateWorld(player);
         }
-    }
-
-    private boolean isOnLunar(UUID uuid) {
-        for(String brand : LunarBreakerAPI.getInstance().getBrands().get(uuid)) {
-            if(brand.contains(":") && brand.split(":")[0].equals("lunarclient")) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @EventHandler
