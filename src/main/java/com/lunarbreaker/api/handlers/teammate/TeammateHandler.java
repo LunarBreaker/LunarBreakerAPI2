@@ -59,6 +59,15 @@ public class TeammateHandler {
 
     /**
      * @param players     The players to send the teammates to
+     * @param leader      The team leader
+     */
+    public void sendTeammates(Collection<Player> players, UUID leader) {
+        Teammates teammates = new Teammates(leader, 1, players);
+        players.forEach(player -> sendTeammates(player, teammates));
+    }
+
+    /**
+     * @param players     The players to send the teammates to
      * @param teammates   The teammates to send
      */
     public void sendTeammates(Collection<Player> players, Teammates teammates) {
