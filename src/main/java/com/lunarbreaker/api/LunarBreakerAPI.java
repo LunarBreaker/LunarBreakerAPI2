@@ -45,6 +45,13 @@ public class LunarBreakerAPI extends JavaPlugin {
 
     @Getter private static final String CB_MESSAGE_CHANNEL = "CB-Client";
     @Getter private static final String LC_MESSAGE_CHANNEL = "Lunar-Client";
+    @Getter private static final List<String> FORGE_MESSAGE_CHANNELS = new ArrayList<>();
+
+    static {
+        FORGE_MESSAGE_CHANNELS.add("FML|HS");
+        FORGE_MESSAGE_CHANNELS.add("FML");
+        FORGE_MESSAGE_CHANNELS.add("FORGE");
+    }
 
     @Getter private BorderHandler borderHandler;
     @Getter private BossbarHandler bossbarHandler;
@@ -144,14 +151,6 @@ public class LunarBreakerAPI extends JavaPlugin {
 
     /**
      * @param uuid   The UUID of the player you are checking
-     * @return       True if they are running BLC
-     */
-    public boolean isRunningBadlionClient(UUID uuid) {
-        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.BLC, true));
-    }
-
-    /**
-     * @param uuid   The UUID of the player you are checking
      * @return       True if they are running CB
      */
     public boolean isRunningCheatBreaker(UUID uuid) {
@@ -173,15 +172,6 @@ public class LunarBreakerAPI extends JavaPlugin {
     @Deprecated
     public boolean isRunningForge(Player p) {
         return isRunningForge(p.getUniqueId());
-    }
-
-    /**
-     * @param p   The player you are checking
-     * @return    True if they are running BLC
-     */
-    @Deprecated
-    public boolean isRunningBadlionClient(Player p) {
-        return isRunningBadlionClient(p.getUniqueId());
     }
 
     /**

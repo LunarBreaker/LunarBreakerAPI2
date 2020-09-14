@@ -25,10 +25,10 @@ public class ClientCommand implements CommandExecutor {
 
         Player target = (Player) sender;
 
-        if(args.length > 0) {
+        if (args.length > 0) {
             target = Bukkit.getPlayer(args[0]);
 
-            if(target == null) {
+            if (target == null) {
                 sender.sendMessage(ChatColor.RED + "That player was not found.");
                 return false;
             }
@@ -36,7 +36,10 @@ public class ClientCommand implements CommandExecutor {
 
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + String.join("", Collections.nCopies(53, "-")));
         sender.sendMessage(ChatColor.YELLOW + target.getDisplayName() + ChatColor.GRAY + ":");
-        if(LunarBreakerAPI.getInstance().isRunningLunarClient(target.getUniqueId())) {
+
+        if(LunarBreakerAPI.getInstance().isRunningForge(target.getUniqueId())) {
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Client" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Forge");
+        }else if(LunarBreakerAPI.getInstance().isRunningLunarClient(target.getUniqueId())) {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Client" + ChatColor.GRAY + ": " + ChatColor.DARK_AQUA + "Lunar Client");
         }else if(LunarBreakerAPI.getInstance().isRunningCheatBreaker(target.getUniqueId())) {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Client" + ChatColor.GRAY + ": " + ChatColor.RED + "CheatBreaker");
@@ -57,7 +60,7 @@ public class ClientCommand implements CommandExecutor {
         }
 
         if(LunarBreakerAPI.getInstance().isOn18(target)) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target)+ ChatColor.GRAY + " (1.8)");
+            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target)+ ChatColor.GRAY + " (1.8+)");
         }else {
             sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target)+ ChatColor.GRAY + " (1.7)");
         }

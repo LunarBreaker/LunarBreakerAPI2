@@ -36,4 +36,5 @@ public final class Border {
         this.maxX = maxX;
         this.maxZ = maxZ;
     }
+
 }

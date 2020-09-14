@@ -39,7 +39,11 @@ public class PlayerListener implements Listener {
             channels.add(channel);
         }
 
-        if(channel.equals(LunarBreakerAPI.getCB_MESSAGE_CHANNEL())) {
+        if(LunarBreakerAPI.getFORGE_MESSAGE_CHANNELS().contains(channel) && plugin.getChannels().get(player.getUniqueId()).containsAll(LunarBreakerAPI.getFORGE_MESSAGE_CHANNELS())) {
+            plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.FORGE, true));
+
+            plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.FORGE));
+        }else if(channel.equals(LunarBreakerAPI.getCB_MESSAGE_CHANNEL())) {
             boolean verified = LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId()).contains("vanilla") && !LunarBreakerAPI.getInstance().isOn18(player);
             plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.CB, verified));
 
