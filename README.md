@@ -3,9 +3,9 @@
     <img src="https://i.gyazo.com/2ae7a1967ff14ed8d830df0670965969.png" width="150" height="150"/>
 </p>
 
-## LunarBreakerAPI2 electric boogaloo 
+## LunarBreakerAPI2: Electric Boogaloo
 
-LunarBreakerAPI 2 is a complete recode of the original which was based off [CheatBreakerAPI](https://github.com/CheatBreaker/CheatBreakerAPI), this version is here to be more optimised and has made integrating into your plugins much simpler but with a few bonus features.
+LunarBreakerAPI2 is a complete recode of the original which was based off [CheatBreakerAPI](https://github.com/CheatBreaker/CheatBreakerAPI), this version is here to be more optimised and has made integrating into your plugins much simpler but with a few bonus features.
 
 ## Reporting an issue
 
