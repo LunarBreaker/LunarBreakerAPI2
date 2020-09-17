@@ -100,7 +100,8 @@ public class LunarBreakerAPI extends JavaPlugin {
                 brands.put(player.getUniqueId(), new ArrayList<>());
             }
             List<String> brands = this.brands.get(player.getUniqueId());
-            String brand = new String(bytes, Charsets.UTF_8);
+            String brand = isOn18(player) ? new String(bytes, Charsets.UTF_8).replaceFirst("\u0013", "") : new String(bytes, Charsets.UTF_8);
+
             if(!brands.contains(brand)) {
                 brands.add(brand);
             }
@@ -208,7 +209,7 @@ public class LunarBreakerAPI extends JavaPlugin {
         for(String brand : LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId())) {
             if(brand.contains(":")) {
                 String[] splitBrand = brand.split(":");
-                if(brand.split(":")[0].equals((isOn18(player) ? "\u0013" : "") + "lunarclient") && splitBrand[1].length() == 7) {
+                if(brand.split(":")[0].equals("lunarclient") && splitBrand[1].length() == 7) {
                     return splitBrand[1];
                 }
             }
