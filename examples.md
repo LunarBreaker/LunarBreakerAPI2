@@ -1,10 +1,13 @@
 ```java
-LunarBreakerAPI lbAPI = LunarBreakerAPI.getInstance();
-String message = ChatColor.GREEN + "You have joined the HCTeams queue.";
-
-lbAPI.sendNotificationOrFallback(
-    event.getPlayer(),
-    new Notification(message, Duration.ofSeconds(1),
-    () -> event.getPlayer().sendMessage(message)
-);
+public class Example {
+    public void sendQueueNotification(Player player, String message) {
+        String message = ChatColor.GREEN + "You have joined the " + queueName + " queue.";
+        
+        LunarBreakerAPI.getInstance().getNotificationHandler().sendNotificationOrFallback(
+                player,
+                new Notification(message, Duration.ofSeconds(1)),
+                () -> player.sendMessage(message)
+        );
+    }
+}
 ```
