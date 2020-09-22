@@ -144,6 +144,50 @@ public class LunarBreakerAPI extends JavaPlugin {
 
     /**
      * @param uuid   The UUID of the player you are checking
+     * @return       The client they are running
+     */
+    @Deprecated
+    public Client getClient(UUID uuid) {
+        Map.Entry<Client, Boolean> client = players.get(uuid);
+        if(client != null && client.getValue()) {
+            return client.getKey();
+        }else {
+            return null;
+        }
+    }
+
+    public Collection<Player> getPlayersRunningForge() {
+        List<Player> listToReturn = new ArrayList<>();
+        players.forEach(((uuid, client) -> {
+            if(client.getKey().equals(Client.FORGE) && client.getValue()) {
+                listToReturn.add(Bukkit.getPlayer(uuid));
+            }
+        }));
+        return listToReturn;
+    }
+
+    public Collection<Player> getPlayersRunningCheatBreaker() {
+        List<Player> listToReturn = new ArrayList<>();
+        players.forEach(((uuid, client) -> {
+            if(client.getKey().equals(Client.CB) && client.getValue()) {
+                listToReturn.add(Bukkit.getPlayer(uuid));
+            }
+        }));
+        return listToReturn;
+    }
+
+    public Collection<Player> getPlayersRunningLunarClient() {
+        List<Player> listToReturn = new ArrayList<>();
+        players.forEach(((uuid, client) -> {
+            if(client.getKey().equals(Client.LC) && client.getValue()) {
+                listToReturn.add(Bukkit.getPlayer(uuid));
+            }
+        }));
+        return listToReturn;
+    }
+
+    /**
+     * @param uuid   The UUID of the player you are checking
      * @return       True if they are running Forge
      */
     public boolean isRunningForge(UUID uuid) {
@@ -164,6 +208,15 @@ public class LunarBreakerAPI extends JavaPlugin {
      */
     public boolean isRunningLunarClient(UUID uuid) {
         return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.LC, true));
+    }
+
+    /**
+     * @param p   The player you are checking
+     * @return    The client they are running
+     */
+    @Deprecated
+    public Client getClient(Player p) {
+        return getClient(p.getUniqueId());
     }
 
     /**
