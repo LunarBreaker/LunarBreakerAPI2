@@ -103,7 +103,7 @@ public class LunarBreakerAPI extends JavaPlugin {
             }
 
             List<String> brands = this.brands.get(player.getUniqueId());
-            String brand = new String(bytes, Charsets.UTF_8).replaceFirst("\u0013", "");
+            String brand = new String(bytes, Charsets.UTF_8).replaceFirst("\u0013", "").replaceFirst("\u0007", "");
 
             if(!brands.contains(brand)) {
                 brands.add(brand);

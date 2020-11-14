@@ -4,12 +4,9 @@ import com.lunarbreaker.api.LunarBreakerAPI;
 import com.lunarbreaker.api.client.Client;
 import com.lunarbreaker.api.events.PlayerRegisterEvent;
 import com.lunarbreaker.api.events.PlayerUnregisterEvent;
-import com.lunarbreaker.api.handlers.waypoint.Waypoint;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
@@ -45,7 +42,7 @@ public class PlayerListener implements Listener {
 
         switch(channel) {
             case LunarBreakerAPI.CB_MESSAGE_CHANNEL:
-                verified = LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId()).contains("vanilla") && LunarBreakerAPI.getInstance().getVersion(player).equals("1.7"); //TODO: Check if this works
+                verified = LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId()).contains("vanilla") && LunarBreakerAPI.getInstance().getVersion(player).equals("1.7");
                 if(!verified) break;
                 plugin.getPlayers().put(player.getUniqueId(), Client.CB);
 
@@ -96,20 +93,6 @@ public class PlayerListener implements Listener {
         plugin.getPlayers().remove(event.getPlayer().getUniqueId());
         plugin.getBrands().remove(event.getPlayer().getUniqueId());
         plugin.getChannels().remove(event.getPlayer().getUniqueId());
-    }
-
-    @EventHandler
-    public void test(PlayerJoinEvent e) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            LunarBreakerAPI.getInstance().getWaypointHandler().sendWaypoint(e.getPlayer(),
-                    new Waypoint(
-                            "ok",
-                            e.getPlayer().getLocation(),
-                            LunarBreakerAPI.getInstance().fromRGB(173, 216, 230),
-                            true,
-                            true
-                    ));
-        }, 20);
     }
 
 }
