@@ -3,7 +3,10 @@ package com.lunarbreaker.api.handlers.staffmodule;
 import com.cheatbreaker.nethandler.server.CBPacketStaffModState;
 import com.lunarbreaker.api.LunarBreakerAPI;
 import com.lunarclient.bukkitapi.nethandler.client.LCPacketStaffModState;
+import com.lunarclient.bukkitapi.nethandler.server.LCPacketStaffModStatus;
 import org.bukkit.entity.Player;
+
+import java.util.Collections;
 
 /*
  * Used to handle all staff module packets
@@ -33,10 +36,8 @@ public class StaffModuleHandler {
      * @param player   The player to give all staff modules to
      */
     public void giveAllStaffModules(Player player) {
-        if(plugin.isRunningCheatBreaker(player.getUniqueId()) || plugin.isRunningLunarClient(player.getUniqueId())) {
-            for (StaffModule module : StaffModule.values()) {
-                setStaffModuleState(player, module, true);
-            }
+        if(plugin.isRunningLunarClient(player.getUniqueId())) {
+            plugin.sendPacket(player, new LCPacketStaffModStatus(Collections.singleton("BUNNY_HOP")));
         }
     }
 

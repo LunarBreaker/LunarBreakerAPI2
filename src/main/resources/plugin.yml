@@ -2,6 +2,10 @@ name: LunarBreakerAPI
 version: ${git.commit.id.abbrev}
 description: CheatBreaker and Lunar Client API plugin
 authors: ["CheatBreaker Development Team", "Moonsworth LLC", "ProPractice"]
+depend:
+  - ProtocolLib
+softdepend:
+  - ViaVersion
 main: com.lunarbreaker.api.LunarBreakerAPI
 load: STARTUP
 commands:

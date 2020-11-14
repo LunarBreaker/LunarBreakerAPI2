@@ -59,11 +59,8 @@ public class ClientCommand implements CommandExecutor {
                     ChatColor.WHITE + String.join(ChatColor.GRAY + ", " + ChatColor.WHITE, brands));
         }
 
-        if(LunarBreakerAPI.getInstance().isOn18(target)) {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target)+ ChatColor.GRAY + " (1.8+)");
-        }else {
-            sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target)+ ChatColor.GRAY + " (1.7)");
-        }
+        sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "Version" + ChatColor.GRAY + ": " + ChatColor.WHITE + LunarBreakerAPI.getInstance().getLunarVersion(target)+ ChatColor.GRAY + " (" + LunarBreakerAPI.getInstance().getVersion(target) + ")");
+
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + String.join("", Collections.nCopies(53, "-")));
 
         return true;

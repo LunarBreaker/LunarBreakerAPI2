@@ -34,7 +34,7 @@ public class LCCommand implements CommandExecutor {
         if(!LunarBreakerAPI.getInstance().isRunningLunarClient(target.getUniqueId())) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + target.getDisplayName() + " &cis NOT on Lunar Client."));
         }else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a" + target.getDisplayName() + " &ais currently on " + (LunarBreakerAPI.getInstance().isOn18(target) ? "1.8" : "1.7") + " Lunar Client."));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a" + target.getDisplayName() + " &ais currently on " + LunarBreakerAPI.getInstance().getVersion(target) + " Lunar Client."));
         }
 
         return true;

@@ -4,14 +4,16 @@ import com.lunarbreaker.api.LunarBreakerAPI;
 import com.lunarbreaker.api.client.Client;
 import com.lunarbreaker.api.events.PlayerRegisterEvent;
 import com.lunarbreaker.api.events.PlayerUnregisterEvent;
+import com.lunarbreaker.api.handlers.waypoint.Waypoint;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,39 +41,75 @@ public class PlayerListener implements Listener {
             channels.add(channel);
         }
 
-        if(LunarBreakerAPI.getFORGE_MESSAGE_CHANNELS().contains(channel) && plugin.getChannels().get(player.getUniqueId()).containsAll(LunarBreakerAPI.getFORGE_MESSAGE_CHANNELS())) {
-            plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.FORGE, true));
+        boolean verified;
+
+        switch(channel) {
+            case LunarBreakerAPI.CB_MESSAGE_CHANNEL:
+                verified = LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId()).contains("vanilla") && LunarBreakerAPI.getInstance().getVersion(player).equals("1.7"); //TODO: Check if this works
+                if(!verified) break;
+                plugin.getPlayers().put(player.getUniqueId(), Client.CB);
+
+                plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.CB));
+                plugin.getWorldHandler().updateWorld(event.getPlayer());
+                break;
+            case LunarBreakerAPI.LC_MESSAGE_CHANNEL:
+                verified = !plugin.getLunarVersion(player).equals("N/A");
+                if(!verified) break;
+                plugin.getPlayers().put(player.getUniqueId(), Client.LC);
+
+                plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
+                plugin.getWorldHandler().updateWorld(player);
+                return;
+        }
+
+        if(LunarBreakerAPI.FORGE_MESSAGE_CHANNELS.contains(channel) && plugin.getChannels().get(player.getUniqueId()).containsAll(LunarBreakerAPI.FORGE_MESSAGE_CHANNELS)) {
+            plugin.getPlayers().put(player.getUniqueId(), Client.FORGE);
 
             plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.FORGE));
-        }else if(channel.equals(LunarBreakerAPI.getCB_MESSAGE_CHANNEL())) {
-            boolean verified = LunarBreakerAPI.getInstance().getBrands().get(player.getUniqueId()).contains("vanilla") && !LunarBreakerAPI.getInstance().isOn18(player);
-            plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.CB, verified));
-
-            if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.CB));
-            plugin.getWorldHandler().updateWorld(event.getPlayer());
-        }else if(channel.equals(LunarBreakerAPI.getLC_MESSAGE_CHANNEL())) {
-            boolean verified = !plugin.getLunarVersion(player).equals("N/A");
-            plugin.getPlayers().put(player.getUniqueId(), new AbstractMap.SimpleEntry<>(Client.LC, verified));
-
-            if(verified) plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
-            plugin.getWorldHandler().updateWorld(player);
         }
     }
 
     @EventHandler
     public void onUnregister(PlayerUnregisterChannelEvent event) {
-        if (event.getChannel().equals(LunarBreakerAPI.getCB_MESSAGE_CHANNEL()) || event.getChannel().equals(LunarBreakerAPI.getLC_MESSAGE_CHANNEL())) {
-            plugin.getPlayers().remove(event.getPlayer().getUniqueId());
+        switch (event.getChannel()) {
+            case LunarBreakerAPI.CB_MESSAGE_CHANNEL:
+                plugin.getPlayers().remove(event.getPlayer().getUniqueId());
 
-            plugin.getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), event.getChannel().equals(LunarBreakerAPI.getCB_MESSAGE_CHANNEL())? Client.CB : Client.LC));
+                plugin.getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.CB));
+                break;
+            case LunarBreakerAPI.LC_MESSAGE_CHANNEL:
+                plugin.getPlayers().remove(event.getPlayer().getUniqueId());
+
+                plugin.getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.LC));
+                break;
         }
     }
 
     @EventHandler
     public void onUnregister(PlayerQuitEvent event) {
+        if(plugin.isRunningLunarClient(event.getPlayer().getUniqueId()) && (!plugin.getVersion(event.getPlayer()).equals("1.7") && !plugin.getVersion(event.getPlayer()).equals("1.8"))) {
+            plugin.getPlayers().remove(event.getPlayer().getUniqueId());
+
+            plugin.getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.LC));
+        }
+
         plugin.getPlayers().remove(event.getPlayer().getUniqueId());
         plugin.getBrands().remove(event.getPlayer().getUniqueId());
         plugin.getChannels().remove(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void test(PlayerJoinEvent e) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            LunarBreakerAPI.getInstance().getWaypointHandler().sendWaypoint(e.getPlayer(),
+                    new Waypoint(
+                            "ok",
+                            e.getPlayer().getLocation(),
+                            LunarBreakerAPI.getInstance().fromRGB(173, 216, 230),
+                            true,
+                            true
+                    ));
+        }, 20);
     }
 
 }

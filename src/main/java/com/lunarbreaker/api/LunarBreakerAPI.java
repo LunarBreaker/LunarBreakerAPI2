@@ -1,6 +1,7 @@
 package com.lunarbreaker.api;
 
 import com.cheatbreaker.nethandler.CBPacket;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.base.Charsets;
 import com.lunarbreaker.api.client.Client;
 import com.lunarbreaker.api.commands.CBCommand;
@@ -9,6 +10,7 @@ import com.lunarbreaker.api.commands.LBCommand;
 import com.lunarbreaker.api.commands.LCCommand;
 import com.lunarbreaker.api.events.PacketReceivedEvent;
 import com.lunarbreaker.api.events.PacketSentEvent;
+import com.lunarbreaker.api.events.PlayerRegisterEvent;
 import com.lunarbreaker.api.handlers.border.BorderHandler;
 import com.lunarbreaker.api.handlers.bossbar.BossbarHandler;
 import com.lunarbreaker.api.handlers.cooldown.CooldownHandler;
@@ -16,7 +18,6 @@ import com.lunarbreaker.api.handlers.emote.EmoteHandler;
 import com.lunarbreaker.api.handlers.ghost.GhostHandler;
 import com.lunarbreaker.api.handlers.hologram.HologramHandler;
 import com.lunarbreaker.api.handlers.nametag.NametagHandler;
-import com.lunarbreaker.api.handlers.notification.NotificationHandler;
 import com.lunarbreaker.api.handlers.server.ServerHandler;
 import com.lunarbreaker.api.handlers.staffmodule.StaffModuleHandler;
 import com.lunarbreaker.api.handlers.teammate.TeammateHandler;
@@ -32,20 +33,22 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
+import us.myles.ViaVersion.ViaVersionPlugin;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Getter
 public class LunarBreakerAPI extends JavaPlugin {
 
     @Getter private static LunarBreakerAPI instance;
 
-    @Getter private static final String CB_MESSAGE_CHANNEL = "CB-Client";
-    @Getter private static final String LC_MESSAGE_CHANNEL = "Lunar-Client";
-    @Getter private static final List<String> FORGE_MESSAGE_CHANNELS = new ArrayList<>();
+    public static final String CB_MESSAGE_CHANNEL = "CB-Client";
+    public static final String LC_MESSAGE_CHANNEL = "Lunar-Client";
+    public static final List<String> FORGE_MESSAGE_CHANNELS = new ArrayList<>();
 
     static {
         FORGE_MESSAGE_CHANNELS.add("FML|HS");
@@ -53,28 +56,27 @@ public class LunarBreakerAPI extends JavaPlugin {
         FORGE_MESSAGE_CHANNELS.add("FORGE");
     }
 
-    @Getter private BorderHandler borderHandler;
-    @Getter private BossbarHandler bossbarHandler;
-    @Getter private CooldownHandler cooldownHandler;
-    @Getter private EmoteHandler emoteHandler;
-    @Getter private GhostHandler ghostHandler;
-    @Getter private HologramHandler hologramHandler;
-    @Getter private NametagHandler nametagHandler;
-    @Getter private NotificationHandler notificationHandler;
-    @Getter private ServerHandler serverHandler;
-    @Getter private StaffModuleHandler staffModuleHandler;
-    @Getter private TeammateHandler teammateHandler;
-    @Getter private TitleHandler titleHandler;
-    @Getter private VoiceHandler voiceHandler;
-    @Getter private WaypointHandler waypointHandler;
-    @Getter private WorldHandler worldHandler;
+    private BorderHandler borderHandler;
+    private BossbarHandler bossbarHandler;
+    private CooldownHandler cooldownHandler;
+    private EmoteHandler emoteHandler;
+    private GhostHandler ghostHandler;
+    private HologramHandler hologramHandler;
+    private NametagHandler nametagHandler;
+    private ServerHandler serverHandler;
+    private StaffModuleHandler staffModuleHandler;
+    private TeammateHandler teammateHandler;
+    private TitleHandler titleHandler;
+    private VoiceHandler voiceHandler;
+    private WaypointHandler waypointHandler;
+    private WorldHandler worldHandler;
 
-    @Setter @Getter private CBNetHandler cbNetHandlerServer = new CBNetHandler();
-    @Setter @Getter private LCNetHandler lcNetHandlerServer = new LCNetHandler();
+    @Setter private CBNetHandler cbNetHandlerServer = new CBNetHandler();
+    @Setter private LCNetHandler lcNetHandlerServer = new LCNetHandler();
 
-    @Getter private final Map<UUID, Map.Entry<Client, Boolean>> players = new HashMap<>();
-    @Getter private final Map<UUID, List<String>> brands = new HashMap<>();
-    @Getter private final Map<UUID, List<String>> channels = new HashMap<>();
+    private final Map<UUID, Client> players = new ConcurrentHashMap<>();
+    private final Map<UUID, List<String>> brands = new ConcurrentHashMap<>();
+    private final Map<UUID, List<String>> channels = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
@@ -99,11 +101,19 @@ public class LunarBreakerAPI extends JavaPlugin {
             if(!brands.containsKey(player.getUniqueId())) {
                 brands.put(player.getUniqueId(), new ArrayList<>());
             }
+
             List<String> brands = this.brands.get(player.getUniqueId());
-            String brand = isOn18(player) ? new String(bytes, Charsets.UTF_8).replaceFirst("\u0013", "") : new String(bytes, Charsets.UTF_8);
+            String brand = new String(bytes, Charsets.UTF_8).replaceFirst("\u0013", "");
 
             if(!brands.contains(brand)) {
                 brands.add(brand);
+            }
+
+            if(!getVersion(player).equals("1.7") && !getVersion(player).equals("1.8") && !getLunarVersion(player).equals("N/A")) {
+                getPlayers().put(player.getUniqueId(), Client.LC);
+
+                getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
+                getWorldHandler().updateWorld(player);
             }
         });
 
@@ -130,7 +140,6 @@ public class LunarBreakerAPI extends JavaPlugin {
         ghostHandler = new GhostHandler(this);
         hologramHandler = new HologramHandler(this);
         nametagHandler = new NametagHandler(this);
-        notificationHandler = new NotificationHandler(this);
         serverHandler = new ServerHandler(this);
         staffModuleHandler = new StaffModuleHandler(this);
         teammateHandler = new TeammateHandler(this);
@@ -148,18 +157,13 @@ public class LunarBreakerAPI extends JavaPlugin {
      */
     @Deprecated
     public Client getClient(UUID uuid) {
-        Map.Entry<Client, Boolean> client = players.get(uuid);
-        if(client != null && client.getValue()) {
-            return client.getKey();
-        }else {
-            return null;
-        }
+        return players.get(uuid);
     }
 
     public Collection<Player> getPlayersRunningForge() {
         List<Player> listToReturn = new ArrayList<>();
         players.forEach(((uuid, client) -> {
-            if(client.getKey().equals(Client.FORGE) && client.getValue()) {
+            if(client.equals(Client.FORGE)) {
                 listToReturn.add(Bukkit.getPlayer(uuid));
             }
         }));
@@ -169,7 +173,7 @@ public class LunarBreakerAPI extends JavaPlugin {
     public Collection<Player> getPlayersRunningCheatBreaker() {
         List<Player> listToReturn = new ArrayList<>();
         players.forEach(((uuid, client) -> {
-            if(client.getKey().equals(Client.CB) && client.getValue()) {
+            if(client.equals(Client.CB)) {
                 listToReturn.add(Bukkit.getPlayer(uuid));
             }
         }));
@@ -179,7 +183,7 @@ public class LunarBreakerAPI extends JavaPlugin {
     public Collection<Player> getPlayersRunningLunarClient() {
         List<Player> listToReturn = new ArrayList<>();
         players.forEach(((uuid, client) -> {
-            if(client.getKey().equals(Client.LC) && client.getValue()) {
+            if(client.equals(Client.LC)) {
                 listToReturn.add(Bukkit.getPlayer(uuid));
             }
         }));
@@ -191,7 +195,7 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @return       True if they are running Forge
      */
     public boolean isRunningForge(UUID uuid) {
-        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.FORGE, true));
+        return players.containsKey(uuid) && players.get(uuid).equals(Client.FORGE);
     }
 
     /**
@@ -199,7 +203,7 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @return       True if they are running CB
      */
     public boolean isRunningCheatBreaker(UUID uuid) {
-        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.CB, true));
+        return players.containsKey(uuid) && players.get(uuid).equals(Client.CB);
     }
 
     /**
@@ -207,14 +211,14 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @return       True if they are running LC
      */
     public boolean isRunningLunarClient(UUID uuid) {
-        return players.containsKey(uuid) && players.get(uuid).equals(new AbstractMap.SimpleEntry<>(Client.LC, true));
+        Client client = players.get(uuid);
+        return players.containsKey(uuid) && client.equals(Client.LC);
     }
 
     /**
      * @param p   The player you are checking
      * @return    The client they are running
      */
-    @Deprecated
     public Client getClient(Player p) {
         return getClient(p.getUniqueId());
     }
@@ -223,7 +227,6 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @param p   The player you are checking
      * @return    True if they are running Forge
      */
-    @Deprecated
     public boolean isRunningForge(Player p) {
         return isRunningForge(p.getUniqueId());
     }
@@ -232,7 +235,6 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @param p   The player you are checking
      * @return    True if they are running CB
      */
-    @Deprecated
     public boolean isRunningCheatBreaker(Player p) {
         return isRunningCheatBreaker(p.getUniqueId());
     }
@@ -241,17 +243,32 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @param p   The player you are checking
      * @return    True if they are running LC
      */
-    @Deprecated
     public boolean isRunningLunarClient(Player p) {
         return isRunningLunarClient(p.getUniqueId());
     }
 
     /**
      * @param player   The player you are checking
-     * @return         True if they are running 1.8 or higher
+     * @return         The version they are playing on
      */
-    public boolean isOn18(Player player) {
-        return ((CraftPlayer) player).getHandle().playerConnection.networkManager.getVersion() >= 47;
+    public String getVersion(Player player) {
+        switch(getProtocolVersion(player)) {
+            case 5:
+                return "1.7";
+            case 47:
+                return "1.8";
+            case 340:
+                return "1.12";
+        }
+        return "N/A";
+    }
+
+    public int getProtocolVersion(Player player) {
+        if(getServer().getPluginManager().getPlugin("ViaVersion") != null) {
+            return ViaVersionPlugin.getInstance().getApi().getPlayerVersion(player);
+        }else {
+            return ProtocolLibrary.getProtocolManager().getProtocolVersion(player);
+        }
     }
 
     /**
