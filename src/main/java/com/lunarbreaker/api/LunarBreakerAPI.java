@@ -160,6 +160,9 @@ public class LunarBreakerAPI extends JavaPlugin {
         return players.get(uuid);
     }
 
+    /**
+     * @return   Return a collection of players running Forge
+     */
     public Collection<Player> getPlayersRunningForge() {
         List<Player> listToReturn = new ArrayList<>();
         players.forEach(((uuid, client) -> {
@@ -170,6 +173,9 @@ public class LunarBreakerAPI extends JavaPlugin {
         return listToReturn;
     }
 
+    /**
+     * @return   Return a collection of players running CheatBreaker
+     */
     public Collection<Player> getPlayersRunningCheatBreaker() {
         List<Player> listToReturn = new ArrayList<>();
         players.forEach(((uuid, client) -> {
@@ -180,6 +186,9 @@ public class LunarBreakerAPI extends JavaPlugin {
         return listToReturn;
     }
 
+    /**
+     * @return   Return a collection of players running Lunar Client
+     */
     public Collection<Player> getPlayersRunningLunarClient() {
         List<Player> listToReturn = new ArrayList<>();
         players.forEach(((uuid, client) -> {
@@ -259,10 +268,18 @@ public class LunarBreakerAPI extends JavaPlugin {
                 return "1.8";
             case 340:
                 return "1.12";
+            case 578:
+                return "1.15";
+            case 754:
+                return "1.16";
         }
         return "N/A";
     }
 
+    /**
+     * @param player   The player you are checking
+     * @return         The protocol version of the player
+     */
     public int getProtocolVersion(Player player) {
         if(getServer().getPluginManager().getPlugin("ViaVersion") != null) {
             return ViaVersionPlugin.getInstance().getApi().getPlayerVersion(player);
