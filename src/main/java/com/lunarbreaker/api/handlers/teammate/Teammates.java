@@ -1,9 +1,12 @@
 package com.lunarbreaker.api.handlers.teammate;
 
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /*
@@ -13,7 +16,7 @@ public final class Teammates {
 
     @Getter private final UUID leader;
     @Getter private final long lastMs;
-    @Getter private final Collection<Player> players;
+    @Getter private final Map<Player, Location> players;
 
     /**
      * @param leader    The UUID of the leader
@@ -23,7 +26,12 @@ public final class Teammates {
     public Teammates(UUID leader, long lastMs, Collection<Player> players) {
         this.leader = leader;
         this.lastMs = lastMs;
-        this.players = players;
+        this.players = new HashMap<>();
+        players.forEach(p -> {
+            if(p != null) {
+                this.players.put(p, p.getLocation());
+            }
+        });
     }
 
 }

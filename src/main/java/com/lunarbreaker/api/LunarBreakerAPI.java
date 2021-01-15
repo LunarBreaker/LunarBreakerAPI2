@@ -155,7 +155,6 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @param uuid   The UUID of the player you are checking
      * @return       The client they are running
      */
-    @Deprecated
     public Client getClient(UUID uuid) {
         return players.get(uuid);
     }

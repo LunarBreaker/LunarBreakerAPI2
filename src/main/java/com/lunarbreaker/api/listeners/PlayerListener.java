@@ -83,7 +83,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onUnregister(PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
         if(plugin.isRunningLunarClient(event.getPlayer().getUniqueId()) && (!plugin.getVersion(event.getPlayer()).equals("1.7") && !plugin.getVersion(event.getPlayer()).equals("1.8"))) {
             plugin.getPlayers().remove(event.getPlayer().getUniqueId());
 

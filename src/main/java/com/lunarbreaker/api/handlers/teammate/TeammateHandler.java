@@ -1,6 +1,7 @@
 package com.lunarbreaker.api.handlers.teammate;
 
 import com.cheatbreaker.nethandler.server.CBPacketTeammates;
+import com.google.common.collect.ImmutableMap;
 import com.lunarbreaker.api.LunarBreakerAPI;
 import com.lunarclient.bukkitapi.nethandler.client.LCPacketTeammates;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class TeammateHandler {
 
     private final LunarBreakerAPI plugin;
+    private final Map<String, Double> posMap = new HashMap<>();
 
     public TeammateHandler(LunarBreakerAPI plugin) {
         this.plugin = plugin;
@@ -28,32 +30,36 @@ public class TeammateHandler {
     public void sendTeammates(Player player, Teammates teammates) {
         if(plugin.isRunningLunarClient(player.getUniqueId())) {
             Map<UUID, Map<String, Double>> players = new HashMap<>();
-            Map<String, Double> posMap = new HashMap<>();
-            posMap.put("x", 0D);
-            posMap.put("y", 0D);
-            posMap.put("z", 0D);
 
-            teammates.getPlayers().forEach(p -> players.put(p.getUniqueId(), posMap));
+            teammates.getPlayers().forEach((p, loc) -> {
+                posMap.put("x", loc.getX());
+                posMap.put("y", loc.getY());
+                posMap.put("z", loc.getZ());
+                players.put(p.getUniqueId(), posMap);
+            });
 
             plugin.sendPacket(player, new LCPacketTeammates(
                     teammates.getLeader(),
                     teammates.getLastMs(),
                     players
             ));
+            posMap.clear();
         }else if(plugin.isRunningCheatBreaker(player.getUniqueId())) {
             Map<UUID, Map<String, Double>> players = new HashMap<>();
-            Map<String, Double> posMap = new HashMap<>();
-            posMap.put("x", 0D);
-            posMap.put("y", 0D);
-            posMap.put("z", 0D);
 
-            teammates.getPlayers().forEach(p -> players.put(p.getUniqueId(), posMap));
+            teammates.getPlayers().forEach((p, loc) -> {
+                posMap.put("x", loc.getX());
+                posMap.put("y", loc.getY());
+                posMap.put("z", loc.getZ());
+                players.put(p.getUniqueId(), posMap);
+            });
 
             plugin.sendPacket(player, new CBPacketTeammates(
                     teammates.getLeader(),
                     teammates.getLastMs(),
                     players
             ));
+            posMap.clear();
         }
     }
 
