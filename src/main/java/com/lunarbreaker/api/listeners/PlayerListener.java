@@ -46,7 +46,7 @@ public class PlayerListener implements Listener {
                 if(!verified) break;
                 plugin.getPlayers().put(player.getUniqueId(), Client.CB);
 
-                plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.CB));
+                plugin.getJavaPlugin().getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.CB));
                 plugin.getWorldHandler().updateWorld(event.getPlayer());
                 break;
             case LunarBreakerAPI.LC_MESSAGE_CHANNEL:
@@ -54,7 +54,7 @@ public class PlayerListener implements Listener {
                 if(!verified) break;
                 plugin.getPlayers().put(player.getUniqueId(), Client.LC);
 
-                plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
+                plugin.getJavaPlugin().getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
                 plugin.getWorldHandler().updateWorld(player);
                 return;
         }
@@ -62,7 +62,7 @@ public class PlayerListener implements Listener {
         if(LunarBreakerAPI.FORGE_MESSAGE_CHANNELS.contains(channel) && plugin.getChannels().get(player.getUniqueId()).containsAll(LunarBreakerAPI.FORGE_MESSAGE_CHANNELS)) {
             plugin.getPlayers().put(player.getUniqueId(), Client.FORGE);
 
-            plugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.FORGE));
+            plugin.getJavaPlugin().getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.FORGE));
         }
     }
 
@@ -72,12 +72,12 @@ public class PlayerListener implements Listener {
             case LunarBreakerAPI.CB_MESSAGE_CHANNEL:
                 plugin.getPlayers().remove(event.getPlayer().getUniqueId());
 
-                plugin.getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.CB));
+                plugin.getJavaPlugin().getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.CB));
                 break;
             case LunarBreakerAPI.LC_MESSAGE_CHANNEL:
                 plugin.getPlayers().remove(event.getPlayer().getUniqueId());
 
-                plugin.getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.LC));
+                plugin.getJavaPlugin().getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.LC));
                 break;
         }
     }
@@ -87,7 +87,7 @@ public class PlayerListener implements Listener {
         if(plugin.isRunningLunarClient(event.getPlayer().getUniqueId()) && (!plugin.getVersion(event.getPlayer()).equals("1.7") && !plugin.getVersion(event.getPlayer()).equals("1.8"))) {
             plugin.getPlayers().remove(event.getPlayer().getUniqueId());
 
-            plugin.getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.LC));
+            plugin.getJavaPlugin().getServer().getPluginManager().callEvent(new PlayerUnregisterEvent(event.getPlayer(), Client.LC));
         }
 
         plugin.getPlayers().remove(event.getPlayer().getUniqueId());

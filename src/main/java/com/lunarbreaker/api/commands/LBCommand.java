@@ -16,12 +16,13 @@ public class LBCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + String.join("", Collections.nCopies(53, "-")));
-        sender.sendMessage(ChatColor.YELLOW + "This server is running " + ChatColor.RED + "LunarBreakerAPI2" + ChatColor.GRAY + " (" + LunarBreakerAPI.getInstance().getDescription().getVersion() + ")");
+        sender.sendMessage(ChatColor.YELLOW + "This server is running " + ChatColor.RED + "LunarBreakerAPI2" + ChatColor.GRAY + " (" + LunarBreakerAPI.getInstance().getJavaPlugin().getDescription().getVersion() + ")");
         sender.sendMessage("");
         sender.sendMessage(ChatColor.YELLOW + "Contributors:");
         sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.AQUA + "FrozenOrb " + ChatColor.GRAY + "(CheatBreaker NetHandler)");
         sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.DARK_AQUA + "Moonsworth " + ChatColor.GRAY + "(Lunar Client NetHandler)");
         sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.GREEN + "ProPractice " + ChatColor.GRAY + "(LunarBreakerAPI2)");
+        sender.sendMessage(ChatColor.GRAY + "   • " + ChatColor.LIGHT_PURPLE + "utf_ " + ChatColor.GRAY + "(Fixes)");
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + String.join("", Collections.nCopies(53, "-")));
 
         return true;

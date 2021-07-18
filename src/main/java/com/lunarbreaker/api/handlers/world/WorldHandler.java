@@ -26,7 +26,7 @@ public class WorldHandler implements Listener {
 
     public WorldHandler(LunarBreakerAPI plugin) {
         this.plugin = plugin;
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin.getJavaPlugin());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

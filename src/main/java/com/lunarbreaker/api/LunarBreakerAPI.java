@@ -28,11 +28,14 @@ import com.lunarbreaker.api.handlers.world.WorldHandler;
 import com.lunarbreaker.api.listeners.PlayerListener;
 import com.lunarbreaker.api.net.CBNetHandler;
 import com.lunarbreaker.api.net.LCNetHandler;
+import com.lunarbreaker.api.utils.SafeCommandRegister;
 import com.lunarclient.bukkitapi.nethandler.LCPacket;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
@@ -42,9 +45,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
-public class LunarBreakerAPI extends JavaPlugin {
+public class LunarBreakerAPI {
 
     @Getter private static LunarBreakerAPI instance;
+    @Getter private JavaPlugin javaPlugin;
 
     public static final String CB_MESSAGE_CHANNEL = "CB-Client";
     public static final String LC_MESSAGE_CHANNEL = "Lunar-Client";
@@ -78,15 +82,19 @@ public class LunarBreakerAPI extends JavaPlugin {
     private final Map<UUID, List<String>> brands = new ConcurrentHashMap<>();
     private final Map<UUID, List<String>> channels = new ConcurrentHashMap<>();
 
-    @Override
-    public void onEnable() {
+    public LunarBreakerAPI(JavaPlugin javaPlugin) {
+        this.javaPlugin = javaPlugin;
+        enable();
+    }
+
+    public void enable() {
         instance = this;
 
-        Messenger messenger = getServer().getMessenger();
-        messenger.registerOutgoingPluginChannel(this, CB_MESSAGE_CHANNEL);
-        messenger.registerOutgoingPluginChannel(this, LC_MESSAGE_CHANNEL);
+        Messenger messenger = javaPlugin.getServer().getMessenger();
+        messenger.registerOutgoingPluginChannel(javaPlugin, CB_MESSAGE_CHANNEL);
+        messenger.registerOutgoingPluginChannel(javaPlugin, LC_MESSAGE_CHANNEL);
 
-        messenger.registerIncomingPluginChannel(this, CB_MESSAGE_CHANNEL, (channel, player, bytes) -> {
+        messenger.registerIncomingPluginChannel(javaPlugin, CB_MESSAGE_CHANNEL, (channel, player, bytes) -> {
             CBPacket packet = CBPacket.handle(cbNetHandlerServer, bytes, player);
             if(packet != null) {
                 PacketReceivedEvent event = new PacketReceivedEvent(player, packet);
@@ -97,7 +105,7 @@ public class LunarBreakerAPI extends JavaPlugin {
             }
         });
 
-        messenger.registerIncomingPluginChannel(this, "MC|Brand", (channel, player, bytes) -> {
+        messenger.registerIncomingPluginChannel(javaPlugin, "MC|Brand", (channel, player, bytes) -> {
             if(!brands.containsKey(player.getUniqueId())) {
                 brands.put(player.getUniqueId(), new ArrayList<>());
             }
@@ -112,12 +120,12 @@ public class LunarBreakerAPI extends JavaPlugin {
             if(!getVersion(player).equals("1.7") && !getVersion(player).equals("1.8") && !getLunarVersion(player).equals("N/A")) {
                 getPlayers().put(player.getUniqueId(), Client.LC);
 
-                getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
+                javaPlugin.getServer().getPluginManager().callEvent(new PlayerRegisterEvent(player, Client.LC));
                 getWorldHandler().updateWorld(player);
             }
         });
 
-        messenger.registerIncomingPluginChannel(this, LC_MESSAGE_CHANNEL, (channel, player, bytes) -> {
+        messenger.registerIncomingPluginChannel(javaPlugin, LC_MESSAGE_CHANNEL, (channel, player, bytes) -> {
             LCPacket packet = LCPacket.handle(bytes, player);
             if(packet != null) {
                 PacketReceivedEvent event = new PacketReceivedEvent(player, packet);
@@ -128,10 +136,14 @@ public class LunarBreakerAPI extends JavaPlugin {
             }
         });
 
-        getCommand("lc").setExecutor(new LCCommand());
-        getCommand("client").setExecutor(new ClientCommand());
-        getCommand("lunarbreaker").setExecutor(new LBCommand());
-        getCommand("cb").setExecutor(new CBCommand());
+
+        new HashMap<String, CommandExecutor>() {{
+           put("lc", new LCCommand());
+           put("client", new ClientCommand());
+           put("lunarbreaker", new LBCommand());
+           put("cb", new CBCommand());
+        }}.forEach((s, executor) -> SafeCommandRegister.registerCommand(javaPlugin, s, executor));
+
 
         borderHandler = new BorderHandler(this);
         bossbarHandler = new BossbarHandler(this);
@@ -148,7 +160,7 @@ public class LunarBreakerAPI extends JavaPlugin {
         waypointHandler = new WaypointHandler(this);
         worldHandler = new WorldHandler(this);
 
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        javaPlugin.getServer().getPluginManager().registerEvents(new PlayerListener(this), javaPlugin);
     }
 
     /**
@@ -280,7 +292,7 @@ public class LunarBreakerAPI extends JavaPlugin {
      * @return         The protocol version of the player
      */
     public int getProtocolVersion(Player player) {
-        if(getServer().getPluginManager().getPlugin("ViaVersion") != null) {
+        if(javaPlugin.getServer().getPluginManager().getPlugin("ViaVersion") != null) {
             return ViaVersionPlugin.getInstance().getApi().getPlayerVersion(player);
         }else {
             return ProtocolLibrary.getProtocolManager().getProtocolVersion(player);
@@ -312,7 +324,7 @@ public class LunarBreakerAPI extends JavaPlugin {
      */
     public boolean sendPacket(Player player, @NonNull CBPacket packet) {
         if(isRunningCheatBreaker(player.getUniqueId())) {
-            player.sendPluginMessage(this, CB_MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
+            player.sendPluginMessage(javaPlugin, CB_MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
             Bukkit.getPluginManager().callEvent(new PacketSentEvent(player, packet));
             return true;
         }
@@ -328,7 +340,7 @@ public class LunarBreakerAPI extends JavaPlugin {
      */
     public boolean sendPacket(Player player, LCPacket packet) {
         if(isRunningLunarClient(player.getUniqueId())) {
-            player.sendPluginMessage(this, LC_MESSAGE_CHANNEL, LCPacket.getPacketData(packet));
+            player.sendPluginMessage(javaPlugin, LC_MESSAGE_CHANNEL, LCPacket.getPacketData(packet));
             Bukkit.getPluginManager().callEvent(new PacketSentEvent(player, packet));
             return true;
         }
