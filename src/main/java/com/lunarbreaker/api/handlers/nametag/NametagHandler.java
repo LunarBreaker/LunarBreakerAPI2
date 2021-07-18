@@ -28,7 +28,7 @@ public class NametagHandler {
     public void overrideNametag(Player viewer, Collection<String> nametag, Player target) {
         if(plugin.isRunningLunarClient(viewer.getUniqueId())) {
             plugin.sendPacket(viewer, new LCPacketNametagsOverride(target.getUniqueId(), new ArrayList<>(nametag)));
-        }else if(plugin.isRunningCheatBreaker(viewer.getUniqueId())) {
+        } else if(plugin.isRunningCheatBreaker(viewer.getUniqueId())) {
             plugin.sendPacket(viewer, new CBPacketOverrideNametags(target.getUniqueId(), new ArrayList<>(nametag)));
         }
     }
